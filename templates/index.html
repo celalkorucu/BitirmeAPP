@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ses Dosyası Analizi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;  /* Lacivert arka plan */
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+
+        .ana-container {
+            width: 95%;
+            height: 80vh;
+            margin-top: 15px;
+            background-color: #001A33;
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            margin-top: 14px;
+            background-color: #001A33;
+
+            border-bottom: 3px solid #FF6F00;
+
+        }
+
+        header h1 {
+            font-size: 2.4rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: #ffffff;
+        }
+
+        #audio-upload-container {
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 500px;
+            height: 500px;
+            margin: 5px ;
+            padding: 100px;
+            margin-bottom: 250px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+      
+
+        #audio-upload-container .box {
+
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 900px;
+            width: 400px;
+            padding: 100px;
+            
+            border-radius: 15px;
+        }
+
+        #audio-upload-container h1 {
+            font-size: 1.8rem;
+            
+            color: #ffffff;
+        }
+
+        #audio-upload-container .file-upload label {
+            font-size: 1rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        #audio-upload-container .file-upload input {
+            margin-top: 10px;
+            padding: 150px;
+            height: 50px;
+            width: 200px;
+            border: 2px dashed #FF6F00; /* Mavi renkte kesikli bir kenarlık */
+           /* background-color: #8d5a5a; /* Kırmızı arka plan */
+           background-color: transparent;
+            border-radius: 15px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+
+
+        }
+
+        #audio-upload-container .file-upload input:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #999;
+        }
+
+        #audio-upload-container button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            color: #fff;
+            background-color: #FF6F00;      
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+        }
+
+        #audio-upload-container button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #audio-upload-container button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #audio-upload-container #loading {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #777;
+            display: none;
+        }
+
+
+        button:hover {
+            background-color: #FF6F00;
+        }
+
+
+        #big-keyword-container{
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 700px;
+            height: 730px;
+            max-height: 730px;
+            padding: 150px;
+            margin-bottom: 250px;
+            text-align: center;
+            border-radius: 10px;
+
+            position: absolute; /* Ana container içinde sabitlenir */
+            top: 8px; /* Yukarıdan mesafe (isteğe bağlı değiştirilebilir) */
+            right: -95px; /* Sağ tarafa yaslar */
+        }
+
+        #keyword-container {
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 900px;
+            width: 500px;
+            padding: 50px;
+            border-radius: 15px;
+        }
+
+        .keyword-container h2 {
+            font-size: 20px;
+            color: #ffffff;
+        }
+
+        #added-word-container {
+            width: 110%;
+
+        }
+
+        .word-container {
+            display: flex;
+
+            flex-direction: column;
+            border: 1px solid #ddd;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.1);            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-button-wrapper {
+            display: flex;
+            gap: 10px; /* Input ve buton arasında boşluk */
+        }
+
+        .word-container h1 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        #wordInput {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        #addWordButton {
+            background-color: #FF6F00;
+            color: #fff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #addWordButton:hover {
+            background-color: #FF8C1A;
+        }
+
+        /* Eklenen kelimelerin listesi */
+        .words-container {
+            overflow-y: auto; /* Dikey kaydırma çubuğu */
+            background: rgba(255, 255, 255, 0.1);            width: 110%;
+            max-height: 500px;
+            border-radius: 10px;
+            height: 200px;
+        }
+
+
+        .word-item{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #c29fac;
+        }
+        
+        .suggestion-item{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #c29fac;
+        }
+
+        .word-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .word-list li {
+            display: flex; /* Flexbox kullanımı */
+            justify-content: space-between; /* Metni sola, butonu sağa hizalar */
+            align-items: center; /* Dikey ortalama */
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: #000000;
+            border-bottom: 1px solid #f0f0f0;
+
+
+            margin: 10px 0;
+            
+        }
+        /* Kelime metni */
+        .word-text {
+            flex: 1; /* Butonla doğru hizalanması için alan kaplar */
+            text-align: left; /* Yazıyı sola hizalar */
+            font-size: 16px;
+            color: #333;
+        }
+
+
+
+        .word-list li span {
+            flex: 1;
+            font-size: 25px;
+            color: #333;
+            font-weight: bold;
+
+        }
+
+        #word-list:empty::before {
+            content: "Henüz eklenmiş bir kelime yok.";
+            display: block;
+            text-align: center;
+            color: #777;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+
+
+        #suggestion-big-container {
+            overflow-y: auto; /* Dikey kaydırma çubuğu */
+            background: rgba(255, 255, 255, 0.1);            width: 110%;
+            max-height: 500px;
+            border-radius: 10px;
+            height: 220px;
+
+            }
+
+        .suggestion-container {
+           
+
+             width: 100%;
+            max-height: 500px;
+            border-radius: 10px;
+            height: 200px;
+
+
+            
+        }
+
+        .add-button{
+            background-color: #FF6F00;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .add-button:hover {
+            background-color: #FF8C1A;
+        }
+
+        .suggestion-container h1 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .suggestion-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Öneri maddeleri */
+        .suggestion-list p {
+            padding: 10px;
+            margin: 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .suggestion-list p:last-child {
+            border-bottom: none;
+        }
+
+        /* Scrollbar stilleri */
+        .word-list::-webkit-scrollbar,
+        .suggestion-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .word-list::-webkit-scrollbar-thumb,
+        .suggestion-list::-webkit-scrollbar-thumb {
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+
+        .word-list::-webkit-scrollbar-thumb:hover,
+        .suggestion-list::-webkit-scrollbar-thumb:hover {
+            background-color: #bbb;
+        }
+
+
+
+        #loading {
+            display: none; /* Varsayılan olarak gizli */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Saydam siyah arka plan */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            text-align: center;
+            line-height: 100vh; /* Metni dikey olarak ortalar */
+            z-index: 1000; /* Diğer öğelerin üstünde görünmesi için */
+        }
+
+       
+
+        
+
+
+        .analyze-container {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .analyze-button {
+            color: #fff;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #FF6F00;      
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+        }
+
+        .analyze-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .analyze-button:active{
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        
+        
+
+        
+    </style>
+
+
+</head>
+<body>
+    <header>
+        <h1>Hoşgeldiniz!</h1>
+        <p>Ses dosyasını yükleyin ve analiz edin!</p>
+    </header>
+
+    <div class="ana-container">
+        
+       <!-- SES YÜKLEME HTML KODLARI -->
+       <div id="audio-upload-container">
+        <h1>Ses Dosyanızı Seçin</h1>
+
+        <!-- SES YÜKLEME HTML KODLARI -->
+            <div class="box">
+                <div class="file-upload">
+                    <label for="fileInput">Dosya Seçin:</label>
+                    <input type="file" id="fileInput" />
+                </div>
+                <button id="convertButton">Sesi Metne Çevir</button>
+                
+            </div>
+        </div>
+
+
+        <div id="big-keyword-container">
+
+            <h1>Anahtar Kelime Belirleyin</h1>
+            <!-- ANAHTAR KELİME YÜKLEME KODLARI -->
+            <div id="keyword-container">
+                <div id="added-word-container">
+                    <div class="word-container">
+                        <div class="input-button-wrapper">
+                            <input type="text" id="wordInput" placeholder="Kelime girin...">
+                            <button id="addWordButton">Ekle</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eklenen kelimelerin listesi -->
+                <div class="words-container">
+                    <div class="word-list-container">
+                        <ul class="word-list" id="wordList"></ul>
+                    </div>
+                </div>
+
+                <h2> Önerilen Kelimeler </h2>
+                <div id="suggestion-big-container">
+                    <div class="suggestion-container">
+                        <ul class="suggestion-list" id="suggestionList"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading">İşlem yapılıyor, lütfen bekleyin...</div>
+
+        <div class="analyze-container">
+            <button id="analyzeButton" class="analyze-button">Analiz Et</button>
+        </div>
+    
+
+    </div>
+
+    <div class="table-container" style="display: flex; justify-content: center; align-items: flex-start; margin: 10px; padding: 10px; gap: 20px; padding: 20px; background-color: #1a1a1a; border-radius: 10px; width: 100%; box-sizing: border-box;">
+        <!-- Olumlu cümleler tablosu -->
+        <div class="positiveTable" style="flex: 1; padding: 10px; background-color: #2e7d32; border-radius: 10px; max-width: 48%; box-sizing: border-box;">
+            <h2 style="text-align: center; color: #ffffff;">Olumlu Cümleler</h2>
+            <table id="positiveTable" style="width: 100%; border-collapse: collapse; background-color: #4caf50; color: white; border-radius: 10px; overflow: hidden;">
+                <thead>
+                    <tr>
+                        <th style="padding: 10px; border: 1px solid #ffffff; text-align: left;">Cümle</th>
+                        <th style="padding: 10px; border: 1px solid #ffffff; text-align: left;">Skor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dinamik olumlu cümleler buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Olumsuz cümleler tablosu -->
+        <div class="negativeTable" style="flex: 1; padding: 10px; background-color: #b71c1c; border-radius: 10px; max-width: 48%; box-sizing: border-box;">
+            <h2 style="text-align: center; color: #ffffff;">Olumsuz Cümleler</h2>
+            <table id="negativeTable" style="width: 100%; border-collapse: collapse; background-color: #f44336; color: white; border-radius: 10px; overflow: hidden;">
+                <thead>
+                    <tr>
+                        <th style="padding: 10px; border: 1px solid #ffffff; text-align: left;">Cümle</th>
+                        <th style="padding: 10px; border: 1px solid #ffffff; text-align: left;">Skor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dinamik olumsuz cümleler buraya gelecek -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    
+
+
+    
+
+    
+
+    <!-- DOSYA YÜKLEME  KODLARI -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Uygulama başlatıldı. Hazır!');
+
+            window.storedSentences = []; // storedSentences global olarak tanımlandı
+
+            
+            // Dosya yükleme ve cümleleri saklama
+            document.getElementById('convertButton').addEventListener('click', async () => {
+                const fileInput = document.getElementById('fileInput');
+                const file = fileInput.files[0];
+                const loadingDiv = document.getElementById('loading');
+                const convertButton = document.getElementById('convertButton');
+                const fileUpload = document.querySelector('.file-upload');
+
+                if (!file) {
+                    alert('Lütfen bir dosya seçin.');
+                    return;
+                }
+
+                // Sadece ses dosyalarını kabul et
+                const allowedTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Yalnızca ses dosyaları kabul edilmektedir. Lütfen uygun bir dosya seçin.');
+                    return;
+                }
+
+                // Loading animation and disabling UI
+                loadingDiv.style.display = 'block';
+                convertButton.disabled = true;
+                fileUpload.style.pointerEvents = 'none';
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        alert(errorData.error || 'Bir hata oluştu. Sunucu isteği başarısız.');
+                        throw new Error('Sunucu hatası: ' + (errorData.error || 'Bilinmeyen hata'));
+                    }
+
+                    const data = await response.json();
+
+                    if (data && Array.isArray(data.sentences)) {
+                        alert('İşlem başarılı!');
+                        window.storedSentences = data.sentences; // Cümleleri global değişkene sakla
+                        console.log('Saklanan cümleler:', storedSentences);
+                    } else {
+                        alert('Sunucudan beklenmeyen bir yanıt alındı. Lütfen tekrar deneyin.');
+                        throw new Error('Beklenmeyen sunucu yanıtı.');
+                    }
+                } catch (error) {
+                    console.error('Hata:', error);
+                    alert('Bir hata oluştu. Lütfen daha sonra tekrar deneyin veya destek alın.');
+                } finally {
+                    // Loading animasyonunu kaldır ve UI öğelerini etkinleştir
+                    loadingDiv.style.display = 'none';
+                    convertButton.disabled = false;
+                    fileUpload.style.pointerEvents = 'auto';
+                }
+            });
+        });
+
+        
+
+    </script>
+
+    <!-- KELİME EKLEME , ÖNERME  KODLARI -->
+    <script>
+        // Kelime ekleme işlevi
+        document.addEventListener('DOMContentLoaded', () => {
+            // Kelime ekleme işlevi
+            const wordInput = document.getElementById('wordInput');
+            const addWordButton = document.getElementById('addWordButton');
+            const wordList = document.getElementById('wordList');
+
+            addWordButton.addEventListener('click', () => {
+                const word = wordInput.value.trim();
+
+                if (word === '') {
+                    alert('Lütfen bir kelime girin.');
+                    return;
+                }
+
+                const wordItem = document.createElement('div');
+                wordItem.className = 'word-item';
+                wordItem.innerHTML = `
+                    <span>${word}</span>
+                    <button class="delete-button">Sil</button>
+                `;
+
+                wordItem.querySelector('.delete-button').addEventListener('click', () => {
+                    wordList.removeChild(wordItem);
+                });
+
+                wordList.appendChild(wordItem);
+                wordInput.value = '';
+
+                // Fetch suggestions from the server
+                fetch(`/suggestions?word=${encodeURIComponent(word)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Sunucu isteği başarısız.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const suggestionList = document.getElementById('suggestionList');
+                        suggestionList.innerHTML = '';
+
+                        if (!Array.isArray(data.suggestions)) {
+                            alert('Sunucudan beklenmeyen bir yanıt alındı.');
+                            return;
+                        }
+
+                        data.suggestions.forEach(suggestion => {
+                            const suggestionItem = document.createElement('div');
+                            suggestionItem.className = 'suggestion-item';
+                            suggestionItem.innerHTML = `
+                                <span>${suggestion}</span>
+                                <button class="add-button">Ekle</button>
+                            `;
+
+                            suggestionItem.querySelector('.add-button').addEventListener('click', () => {
+                                const newWordItem = document.createElement('div');
+                                newWordItem.className = 'word-item';
+                                newWordItem.innerHTML = `
+                                    <span>${suggestion}</span>
+                                    <button class="delete-button">Sil</button>
+                                `;
+
+                                newWordItem.querySelector('.delete-button').addEventListener('click', () => {
+                                    wordList.removeChild(newWordItem);
+                                });
+
+                                wordList.appendChild(newWordItem);
+                                suggestionList.removeChild(suggestionItem);
+                            });
+
+                            suggestionList.appendChild(suggestionItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching suggestions:', error);
+                        alert('Sunucu isteği sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+                    });
+            });
+        });
+    </script>
+
+    <!-- METİN FİLTRELEME VE SINIFLANDIRMA KODLARI -->
+    <script>
+            document.addEventListener('DOMContentLoaded', () => {
+            const analyzeButton = document.getElementById('analyzeButton');
+            const loadingDiv = document.getElementById('loading');
+
+            analyzeButton.addEventListener('click', async () => {
+                try {
+                    // Doğrudan storedSentences değişkenini kullan
+                    if (!window.storedSentences || window.storedSentences.length === 0) {
+                        alert('Henüz herhangi bir cümle eklenmedi!');
+                        return;
+                    }
+
+                    const keywords = Array.from(document.querySelectorAll('.word-item span')).map(el => el.textContent);
+
+                    if (keywords.length === 0) {
+                        alert('Anahtar kelimeler eksik!');
+                        return;
+                    }
+
+                    // Gönderilecek veriyi hazırla
+                    const payload = {
+                        sentences: window.storedSentences,
+                        keywords: keywords,
+                    };
+
+                    // Loading animasyonu göster
+                    loadingDiv.style.display = 'block';
+                    analyzeButton.disabled = true;
+
+                    // API isteği gönder (BERT modeli için özel endpoint)
+                    const response = await fetch('/bert-analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.bert_results && data.bert_results.results && data.bert_results.results.length > 0) {
+                        console.log('BERT Analiz sonucu:', data);
+                        displayResults(data.bert_results.results); // Sonuçları tablo olarak göster
+                        alert(`Sınıflandırma işlemi başarılı`);
+                    } else if (data.bert_results && data.bert_results.results && data.bert_results.results.length === 0) {
+                        alert('BERT analizi sonucu herhangi bir cümle bulunamadı!');
+                    } else {
+                        alert(data.error || 'BERT modeline istek sırasında bir hata oluştu.');
+                    }
+                } catch (error) {
+                    console.error('BERT modeli isteğinde hata:', error);
+                    alert('Bir hata oluştu.');
+                } finally {
+                    // Loading animasyonunu gizle
+                    loadingDiv.style.display = 'none';
+                    analyzeButton.disabled = false;
+                }
+            });
+
+            function displayResults(results) {
+                const positiveTable = document.getElementById('positiveTable');
+                const negativeTable = document.getElementById('negativeTable');
+
+                // Tabloları temizle
+                positiveTable.innerHTML = '<tr><th>Cümle</th><th>Skor</th></tr>';
+                negativeTable.innerHTML = '<tr><th>Cümle</th><th>Skor</th></tr>';
+
+                if (!results || results.length === 0) {
+                    console.warn('Sonuç bulunamadı!');
+                    return;
+                }
+
+                results.forEach(result => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td style="padding: 10px; border: 1px solid #ffffff; text-align: left;">${result.sentence}</td>
+                                 <td style="padding: 10px; border: 1px solid #ffffff; text-align: left;">${result.score.toFixed(2)}</td>`;
+
+                  
+
+
+                    if (result.label === 'LABEL_1') {
+                        positiveTable.appendChild(row);
+                    } else if (result.label === 'LABEL_0') {
+                        negativeTable.appendChild(row);
+                    } else {
+                        console.warn('Bilinmeyen etiket:', result.label);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
